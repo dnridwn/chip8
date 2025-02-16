@@ -1,0 +1,2 @@
+run:
+	export CGO_ENABLED=1 MESA_LOADER_DRIVER_OVERRIDE=llvmpipe LIBGL_ALWAYS_SOFTWARE=1 SDL_VIDEODRIVER=x11 && go run cmd/chip8/main.go $(rom)
