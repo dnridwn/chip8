@@ -8,14 +8,13 @@ CHIP-8 is an interpreted programming language developed by Joseph Weisbecker in 
 - Complete emulation of all CHIP-8 instructions.
 - Support for graphics and input as per the CHIP-8 specification.
 
-## Important Notes
-Currently, the emulator does not support user input, and the sound feature remains untested. Implementations for user input and sound will be added in future updates.
-
 ## Project Structure
 The project is organized as follows:
 - **cmd/chip8**: Contains the main application code to run the emulator.
 - **internal/emulator**: Houses the core implementation of the CHIP-8 emulator.
 - **roms**: Directory for storing CHIP-8 ROM files that can be executed by the emulator.
+- **sounds**: Directory for storing sound effects
+- **screenshots**: Directory for storing screenshot images
 
 ## System Requirements
 - Go version 1.16 or newer.
@@ -50,10 +49,10 @@ The following table lists all CHIP-8 opcodes and their implementation status in 
 | 0xBNNN | Jump to address NNN + V0              |    ✅   |
 | 0xCXNN | Set Vx = random byte AND NN           |    ✅   |
 | 0xDXYN | Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision |   ✅    |
-| 0xEX9E | Skip next instruction if key with the value of Vx is pressed |   ❌    |
-| 0xEXA1 | Skip next instruction if key with the value of Vx is not pressed |   ❌    |
+| 0xEX9E | Skip next instruction if key with the value of Vx is pressed |   ✅    |
+| 0xEXA1 | Skip next instruction if key with the value of Vx is not pressed |   ✅    |
 | 0xFX07 | Set Vx = delay timer value            |   ✅    |
-| 0xFX0A | Wait for a key press, store the value of the key in Vx |   ❌    |
+| 0xFX0A | Wait for a key press, store the value of the key in Vx |   ✅    |
 | 0xFX15 | Set delay timer = Vx                  |   ✅    |
 | 0xFX18 | Set sound timer = Vx                  |   ✅    |
 | 0xFX1E | Set I = I + Vx                        |   ✅    |
@@ -62,7 +61,11 @@ The following table lists all CHIP-8 opcodes and their implementation status in 
 | 0xFX55 | Store registers V0 through Vx in memory starting at location I |   ✅    |
 | 0xFX65 | Read registers V0 through Vx from memory starting at location I |   ✅    |
 
-Note: The opcodes related to user input (0xEX9E, 0xEXA1, 0xFX0A) are currently not implemented.
+## Screenshots
+![ibm](./screenshots/ibm.png)
+![keypad](./screenshots/keypad.png)
+![octojam2title](./screenshots/octojam2title.png)
+![tictac](./screenshots/tictac.png)
 
 ## Contributing
 Contributions are welcome! If you find any bugs or have suggestions for improvements, please open an issue or submit a pull request.
