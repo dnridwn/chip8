@@ -78,13 +78,13 @@ func (c *Emulator) LoadROM(filename string) error {
 }
 
 func (c *Emulator) loadFontSet() {
-	for i := 0; i < 80; i++ {
+	for i := range 80 {
 		c.memory[i] = fontSet[i]
 	}
 }
 
 func (c *Emulator) clearDisplay() {
-	for i := 0; i < len(c.display); i++ {
+	for i := range len(c.display) {
 		c.display[i] = 0
 	}
 }
@@ -357,7 +357,7 @@ func (c *Emulator) render(renderer *sdl.Renderer) {
 	renderer.Clear()
 	renderer.SetDrawColor(255, 255, 255, 255)
 
-	for i := 0; i < len(c.display); i++ {
+	for i := range len(c.display) {
 		if c.display[i] == 1 {
 			x := (i % screenWidth) * 10
 			y := (i / screenWidth) * 10
