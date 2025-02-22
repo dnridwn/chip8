@@ -8,6 +8,7 @@ import (
 
 	"math/rand"
 
+	"github.com/veandco/go-sdl2/mix"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -18,7 +19,26 @@ const (
 	screenHeight       = 32
 )
 
-var beepSound []byte
+var (
+	fontSet = []byte{
+		0xF0, 0x90, 0x90, 0x90, 0xF0, //0
+		0x20, 0x60, 0x20, 0x20, 0x70, //1
+		0xF0, 0x10, 0xF0, 0x80, 0xF0, //2
+		0xF0, 0x10, 0xF0, 0x10, 0xF0, //3
+		0x90, 0x90, 0xF0, 0x10, 0x10, //4
+		0xF0, 0x80, 0xF0, 0x10, 0xF0, //5
+		0xF0, 0x80, 0xF0, 0x90, 0xF0, //6
+		0xF0, 0x10, 0x20, 0x40, 0x40, //7
+		0xF0, 0x90, 0xF0, 0x90, 0xF0, //8
+		0xF0, 0x90, 0xF0, 0x10, 0xF0, //9
+		0xF0, 0x90, 0xF0, 0x90, 0x90, //A
+		0xE0, 0x90, 0xE0, 0x90, 0xE0, //B
+		0xF0, 0x80, 0x80, 0x80, 0xF0, //C
+		0xE0, 0x90, 0x90, 0x90, 0xE0, //D
+		0xF0, 0x80, 0xF0, 0x80, 0xF0, //E
+		0xF0, 0x80, 0xF0, 0x80, 0x80, //F
+	}
+)
 
 type Emulator struct {
 	memory     [memorySize]byte
@@ -31,11 +51,13 @@ type Emulator struct {
 	keys       [16]bool
 	delayTimer byte
 	soundTimer byte
+	beepSound  *mix.Chunk
 }
 
 func NewEmulator() *Emulator {
 	emulator := &Emulator{}
 	emulator.pc = memoryStartPointer
+	emulator.loadFontSet()
 	return emulator
 }
 
@@ -53,6 +75,12 @@ func (c *Emulator) LoadROM(filename string) error {
 
 	copy(c.memory[memoryStartPointer:], fc)
 	return nil
+}
+
+func (c *Emulator) loadFontSet() {
+	for i := 0; i < 80; i++ {
+		c.memory[i] = fontSet[i]
+	}
 }
 
 func (c *Emulator) clearDisplay() {
@@ -284,41 +312,25 @@ func (c *Emulator) executeOpcode(opcode uint16) error {
 }
 
 func (c *Emulator) initAudio() error {
-	if err := sdl.Init(sdl.INIT_AUDIO); err != nil {
-		return fmt.Errorf("failed to init audio: %v", err)
-	}
-
-	spec := &sdl.AudioSpec{
-		Freq:     44100,
-		Format:   sdl.AUDIO_U8,
-		Channels: 1,
-		Samples:  512,
-		Callback: nil,
-	}
-
-	if err := sdl.OpenAudio(spec, nil); err != nil {
+	if err := mix.OpenAudio(44100, mix.DEFAULT_FORMAT, 1, 2048); err != nil {
 		return fmt.Errorf("failed to open audio: %v", err)
 	}
 
-	beepSound = make([]byte, 44100/30)
-	for i := range beepSound {
-		if i%2 == 0 {
-			beepSound[i] = 255 // High
-		} else {
-			beepSound[i] = 0 // Low
-		}
+	var err error
+	c.beepSound, err = mix.LoadWAV("sounds/beep.wav")
+	if err != nil {
+		return fmt.Errorf("failed to open beep.wav: %v", err)
 	}
 
 	return nil
 }
 
-func playBeep() {
-	sdl.QueueAudio(1, beepSound)
-	sdl.PauseAudio(false)
+func (c *Emulator) playBeep() {
+	c.beepSound.Play(-1, 0)
 }
 
-func stopBeep() {
-	sdl.PauseAudio(true)
+func (c *Emulator) stopBeep() {
+	mix.HaltChannel(-1)
 }
 
 func (c *Emulator) initGraphics() (*sdl.Renderer, *sdl.Window, error) {
@@ -370,9 +382,9 @@ func (c *Emulator) startTimers(quit chan struct{}) {
 
 			if c.soundTimer > 0 {
 				c.soundTimer--
-				playBeep()
+				c.playBeep()
 			} else {
-				stopBeep()
+				c.stopBeep()
 			}
 		case <-quit:
 			return
