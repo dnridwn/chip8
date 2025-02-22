@@ -447,6 +447,9 @@ func (c *Emulator) Run() error {
 						c.keys[0xB] = true
 					case 'v':
 						c.keys[0xF] = true
+					case sdl.K_ESCAPE:
+						close(quit)
+						return nil
 					}
 				}
 			case *sdl.QuitEvent:
