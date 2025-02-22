@@ -21,7 +21,6 @@ The project is organized as follows:
 - SDL2 for graphics support.
 
 ## Opcode Implementation Status
-
 The following table lists all CHIP-8 opcodes and their implementation status in this emulator:
 
 | Opcode | Instruction                           | Status |
@@ -60,6 +59,23 @@ The following table lists all CHIP-8 opcodes and their implementation status in 
 | 0xFX33 | Store BCD representation of Vx in memory locations I, I+1, and I+2 |   ✅    |
 | 0xFX55 | Store registers V0 through Vx in memory starting at location I |   ✅    |
 | 0xFX65 | Read registers V0 through Vx from memory starting at location I |   ✅    |
+
+## Keypad Mapping
+### Chip8 Keypad:
+|   |   |   |   |
+| - | - | - | - |
+| 1 | 2 | 3 | C |
+| 4 | 5 | 6 | D |
+| 7 | 8 | 9 | E |
+| A | 0 | B | F |
+
+### Emulator Keyboard Mapping:
+|   |   |   |   |
+| - | - | - | - |
+| 1 | 2 | 3 | 4 |
+| Q | W | E | R |
+| A | S | D | F |
+| Z | X | C | V |
 
 ## Screenshots
 ![ibm](./screenshots/ibm.png)

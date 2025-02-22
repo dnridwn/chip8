@@ -415,8 +415,6 @@ func (c *Emulator) Run() error {
 				switch event.GetType() {
 				case sdl.KEYUP:
 					switch e.Keysym.Sym {
-					case '0':
-						c.keys[0x0] = true
 					case '1':
 						c.keys[0x1] = true
 					case '2':
@@ -424,28 +422,30 @@ func (c *Emulator) Run() error {
 					case '3':
 						c.keys[0x3] = true
 					case '4':
-						c.keys[0x4] = true
-					case '5':
-						c.keys[0x5] = true
-					case '6':
-						c.keys[0x6] = true
-					case '7':
-						c.keys[0x7] = true
-					case '8':
-						c.keys[0x8] = true
-					case '9':
-						c.keys[0x9] = true
-					case 'a':
-						c.keys[0xA] = true
-					case 'b':
-						c.keys[0xB] = true
-					case 'c':
 						c.keys[0xC] = true
-					case 'd':
-						c.keys[0xD] = true
+					case 'q':
+						c.keys[0x4] = true
+					case 'w':
+						c.keys[0x5] = true
 					case 'e':
-						c.keys[0xE] = true
+						c.keys[0x6] = true
+					case 'r':
+						c.keys[0xD] = true
+					case 'a':
+						c.keys[0x7] = true
+					case 's':
+						c.keys[0x8] = true
+					case 'd':
+						c.keys[0x9] = true
 					case 'f':
+						c.keys[0xE] = true
+					case 'z':
+						c.keys[0xA] = true
+					case 'x':
+						c.keys[0x0] = true
+					case 'c':
+						c.keys[0xB] = true
+					case 'v':
 						c.keys[0xF] = true
 					}
 				}
