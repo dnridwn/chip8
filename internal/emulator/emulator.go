@@ -356,20 +356,25 @@ func (c *Emulator) render(renderer *sdl.Renderer) {
 	renderer.Present()
 }
 
-func (c *Emulator) startTimers() {
+func (c *Emulator) startTimers(quit chan struct{}) {
 	ticker := time.NewTicker(time.Millisecond * 16)
 	defer ticker.Stop()
 
-	for range ticker.C {
-		if c.delayTimer > 0 {
-			c.delayTimer--
-		}
+	for {
+		select {
+		case <-ticker.C:
+			if c.delayTimer > 0 {
+				c.delayTimer--
+			}
 
-		if c.soundTimer > 0 {
-			c.soundTimer--
-			playBeep()
-		} else {
-			stopBeep()
+			if c.soundTimer > 0 {
+				c.soundTimer--
+				playBeep()
+			} else {
+				stopBeep()
+			}
+		case <-quit:
+			return
 		}
 	}
 }
@@ -387,9 +392,18 @@ func (c *Emulator) Run() error {
 	defer window.Destroy()
 	defer renderer.Destroy()
 
-	go c.startTimers()
+	quit := make(chan struct{})
+	go c.startTimers(quit)
 
 	for {
+		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
+			switch event.(type) {
+			case *sdl.QuitEvent:
+				close(quit)
+				return nil
+			}
+		}
+
 		opcode := c.fetchOpcode()
 		c.pc += 2
 		if err := c.executeOpcode(opcode); err != nil {
