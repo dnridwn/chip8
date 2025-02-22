@@ -13,10 +13,10 @@ import (
 )
 
 const (
-	memorySize         = 4096
-	memoryStartPointer = 0x200
-	screenWidth        = 64
-	screenHeight       = 32
+	memorySize          = 4096
+	programStartPointer = 0x200
+	screenWidth         = 64
+	screenHeight        = 32
 )
 
 var (
@@ -56,7 +56,7 @@ type Emulator struct {
 
 func NewEmulator() *Emulator {
 	emulator := &Emulator{}
-	emulator.pc = memoryStartPointer
+	emulator.pc = programStartPointer
 	emulator.loadFontSet()
 	return emulator
 }
@@ -68,12 +68,12 @@ func (c *Emulator) LoadROM(filename string) error {
 	}
 
 	romSize := len(fc)
-	maxSize := len(c.memory) - memoryStartPointer
+	maxSize := len(c.memory) - programStartPointer
 	if romSize > maxSize {
 		return fmt.Errorf("rom is too large. maximum: %d, got: %d", maxSize, romSize)
 	}
 
-	copy(c.memory[memoryStartPointer:], fc)
+	copy(c.memory[programStartPointer:], fc)
 	return nil
 }
 
