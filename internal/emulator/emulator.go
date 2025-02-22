@@ -242,6 +242,7 @@ func (c *Emulator) executeOpcode(opcode uint16) error {
 			for i, pressed := range c.keys {
 				if pressed {
 					c.v[x] = byte(i)
+					c.keys[i] = false
 					keyPressed = true
 					break
 				}
@@ -397,7 +398,45 @@ func (c *Emulator) Run() error {
 
 	for {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-			switch event.(type) {
+			switch e := event.(type) {
+			case *sdl.KeyboardEvent:
+				switch event.GetType() {
+				case sdl.KEYUP:
+					switch e.Keysym.Sym {
+					case '0':
+						c.keys[0x0] = true
+					case '1':
+						c.keys[0x1] = true
+					case '2':
+						c.keys[0x2] = true
+					case '3':
+						c.keys[0x3] = true
+					case '4':
+						c.keys[0x4] = true
+					case '5':
+						c.keys[0x5] = true
+					case '6':
+						c.keys[0x6] = true
+					case '7':
+						c.keys[0x7] = true
+					case '8':
+						c.keys[0x8] = true
+					case '9':
+						c.keys[0x9] = true
+					case 'a':
+						c.keys[0xA] = true
+					case 'b':
+						c.keys[0xB] = true
+					case 'c':
+						c.keys[0xC] = true
+					case 'd':
+						c.keys[0xD] = true
+					case 'e':
+						c.keys[0xE] = true
+					case 'f':
+						c.keys[0xF] = true
+					}
+				}
 			case *sdl.QuitEvent:
 				close(quit)
 				return nil
