@@ -3,3 +3,5 @@ run:
 
 build:
 	go build -o build/chip8 cmd/chip8/main.go
+
+.PHONY: build
