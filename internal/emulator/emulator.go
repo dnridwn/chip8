@@ -95,13 +95,13 @@ func (c *Emulator) drawSprite(x, y, n byte) {
 
 	c.v[0xF] = 0
 
-	for row := 0; row < int(n); row++ {
+	for row := range int(n) {
 		if posy+row >= 32 {
 			break
 		}
 
 		spriteByte := c.memory[c.i+uint16(row)]
-		for col := 0; col < 8; col++ {
+		for col := range 8 {
 			if posx+col >= 64 {
 				break
 			}
