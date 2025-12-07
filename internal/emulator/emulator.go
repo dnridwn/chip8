@@ -409,53 +409,38 @@ func (c *Emulator) Run() error {
 
 	for {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-			switch e := event.(type) {
-			case *sdl.KeyboardEvent:
-				switch event.GetType() {
-				case sdl.KEYUP:
-					switch e.Keysym.Sym {
-					case '1':
-						c.keys[0x1] = true
-					case '2':
-						c.keys[0x2] = true
-					case '3':
-						c.keys[0x3] = true
-					case '4':
-						c.keys[0xC] = true
-					case 'q':
-						c.keys[0x4] = true
-					case 'w':
-						c.keys[0x5] = true
-					case 'e':
-						c.keys[0x6] = true
-					case 'r':
-						c.keys[0xD] = true
-					case 'a':
-						c.keys[0x7] = true
-					case 's':
-						c.keys[0x8] = true
-					case 'd':
-						c.keys[0x9] = true
-					case 'f':
-						c.keys[0xE] = true
-					case 'z':
-						c.keys[0xA] = true
-					case 'x':
-						c.keys[0x0] = true
-					case 'c':
-						c.keys[0xB] = true
-					case 'v':
-						c.keys[0xF] = true
-					case sdl.K_ESCAPE:
-						close(quit)
-						return nil
-					}
-				}
-			case *sdl.QuitEvent:
+			if _, ok := event.(*sdl.QuitEvent); ok {
 				close(quit)
 				return nil
 			}
 		}
+
+		for i := range 16 {
+			c.keys[i] = false
+		}
+
+		keyState := sdl.GetKeyboardState()
+		if keyState[sdl.SCANCODE_ESCAPE] == 1 {
+			close(quit)
+			return nil
+		}
+
+		c.keys[0x1] = keyState[sdl.SCANCODE_1] == 1
+		c.keys[0x2] = keyState[sdl.SCANCODE_2] == 1
+		c.keys[0x3] = keyState[sdl.SCANCODE_3] == 1
+		c.keys[0xC] = keyState[sdl.SCANCODE_4] == 1
+		c.keys[0x4] = keyState[sdl.SCANCODE_5] == 1
+		c.keys[0x5] = keyState[sdl.SCANCODE_6] == 1
+		c.keys[0x6] = keyState[sdl.SCANCODE_7] == 1
+		c.keys[0xD] = keyState[sdl.SCANCODE_R] == 1
+		c.keys[0x7] = keyState[sdl.SCANCODE_A] == 1
+		c.keys[0x8] = keyState[sdl.SCANCODE_S] == 1
+		c.keys[0x9] = keyState[sdl.SCANCODE_D] == 1
+		c.keys[0xE] = keyState[sdl.SCANCODE_F] == 1
+		c.keys[0xA] = keyState[sdl.SCANCODE_Z] == 1
+		c.keys[0x0] = keyState[sdl.SCANCODE_X] == 1
+		c.keys[0xB] = keyState[sdl.SCANCODE_C] == 1
+		c.keys[0xF] = keyState[sdl.SCANCODE_V] == 1
 
 		opcode := c.fetchOpcode()
 		c.pc += 2
@@ -464,6 +449,5 @@ func (c *Emulator) Run() error {
 		}
 
 		c.render(renderer)
-		time.Sleep(time.Millisecond * 2)
 	}
 }
