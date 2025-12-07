@@ -78,9 +78,7 @@ func (c *Emulator) LoadROM(filename string) error {
 }
 
 func (c *Emulator) loadFontSet() {
-	for i := range 80 {
-		c.memory[i] = fontSet[i]
-	}
+	copy(c.memory[0x50:], fontSet)
 }
 
 func (c *Emulator) clearDisplay() {
@@ -134,7 +132,7 @@ func (c *Emulator) executeOpcode(opcode uint16) error {
 	switch opcode & 0xF000 {
 	case 0x0000:
 		switch nn {
-		case 0x000E:
+		case 0x00E0:
 			c.clearDisplay()
 
 		case 0x00EE:
@@ -192,11 +190,12 @@ func (c *Emulator) executeOpcode(opcode uint16) error {
 			c.v[x] ^= c.v[y]
 
 		case 0x0004:
-			c.v[x] = c.v[x] + c.v[y]
-			c.v[0xF] = 0
 			if c.v[x] < c.v[y] {
 				c.v[0xF] = 1
+			} else {
+				c.v[0xF] = 0
 			}
+			c.v[x] = c.v[x] + c.v[y]
 
 		case 0x0005:
 			if c.v[x] >= c.v[y] {
@@ -289,7 +288,7 @@ func (c *Emulator) executeOpcode(opcode uint16) error {
 			c.i += uint16(c.v[x])
 
 		case 0x29:
-			c.i = uint16(c.v[x]) * 5
+			c.i = (uint16(c.v[x]) * 5) + 0x50
 
 		case 0x33:
 			c.memory[c.i] = c.v[x] / 100
